@@ -23,7 +23,7 @@ Why is data exploration our first step in analyzing a dataset? What information 
 
 ```{r, message = FALSE}
 # 1. Set up your working directory
-getwd()
+setwd("C:/Users/andre/OneDrive/Documents/R/EDA_2024/EDA_Spring2024")
 
 # 2. Load packages
 library(tidyverse)
@@ -31,7 +31,7 @@ library(tidyverse)
 # 3. Import datasets
 USGS.flow.data <- read.csv("./Data/Processed/USGS_Site02085000_Flow_Processed.csv",stringsAsFactors = T)
 
-#View(USGS.flow.data)
+View(USGS.flow.data)
 # Alternate option: click on data frame in Environment tab
 
 colnames(USGS.flow.data)
@@ -61,7 +61,9 @@ Visualize count data for categorical variables.
 ggplot(USGS.flow.data, aes(x = discharge.mean.approval)) +
   geom_bar()
 
-
+# Omit N/A values
+ggplot(na.omit(USGS.flow.data), aes(discharge.mean.approval)) +
+  geom_bar()
 
 ```
 
@@ -70,26 +72,27 @@ ggplot(USGS.flow.data, aes(x = discharge.mean.approval)) +
 Visualize distributions of values for continuous numerical variables. What is happening in each line of code? Insert a comment above each line.
 
 ```{r, fig.height = 3, fig.width = 4}
-#
+# Plot the frequency of discharge mean values as a histogram
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = discharge.mean))
 
-#
+# Create a mean discharge histogram, binning values by increments of 10
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = discharge.mean), binwidth = 10)
 
-#
+# Update the histogram to use 20 bins
 ggplot(USGS.flow.data) +
   geom_histogram(aes(x = discharge.mean), bins = 20)
 
-#
+# Update: limit the x-axis to values from 0 to 500.
 ggplot(USGS.flow.data, aes(x = discharge.mean)) +
   geom_histogram(binwidth = 10) + 
   scale_x_continuous(limits = c(0, 500))
   
-#
+# Adjust graph to extract patterns
 ggplot(USGS.flow.data) +
-  geom_histogram(aes(x = gage.height.mean))
+  geom_histogram(aes(x = gage.height.mean), binwidth = 0.01) +
+  scale_x_continuous(limits = c(0.75,4))
 
 ```
 ### Frequency line graph (function: geom_freqpoly)
@@ -97,14 +100,14 @@ ggplot(USGS.flow.data) +
 An alternate to a histogram is a frequency polygon graph (distributions of values for continuous numerical variables). Instead of displaying bars,  counts of continuous variables are displayed as lines. This is advantageous if you want to display multiple variables or categories of variables at once.
 
 ```{r, fig.height = 3, fig.width = 4}
-#
+# Plot frequency of gage height mean, min, and max values on one graph
 ggplot(USGS.flow.data) +
   geom_freqpoly(aes(x = gage.height.mean), bins = 50) +
   geom_freqpoly(aes(x = gage.height.min), bins = 50, color = "darkgray") +
   geom_freqpoly(aes(x = gage.height.max), bins = 50,  lty = 2) +
   scale_x_continuous(limits = c(0, 10))
 
-#
+# Plot frequency of gage height means by approval status
 ggplot(USGS.flow.data) +
   geom_freqpoly(aes(x = gage.height.mean, color = gage.height.mean.approval), bins = 50) +
   scale_x_continuous(limits = c(0, 10)) +
@@ -126,15 +129,15 @@ A box-and-whisker plot is yet another alternative to histograms (distributions o
 An alternate option is a violin plot, which displays density distributions, somewhat like a hybrid of the box-and-whiskers and the frequency polygon plot.
 
 ```{r, fig.height = 3, fig.width = 4}
-#
+# Create a boxplot of gage height means, divided by approval status
 ggplot(USGS.flow.data) +
   geom_boxplot(aes(x = gage.height.mean.approval, y = gage.height.mean))
 
-#
+# Create boxplots of discharge mean for every increment of 1 for gage height mean
 ggplot(USGS.flow.data) +
   geom_boxplot(aes(x = gage.height.mean, y = discharge.mean, group = cut_width(gage.height.mean, 1)))
 
-#
+# Create "violin" boxplot (frequency represented by width) of mean gage height for each approval group
 ggplot(USGS.flow.data) +
   geom_violin(aes(x = gage.height.mean.approval, y = gage.height.mean), 
               draw_quantiles = c(0.25, 0.5, 0.75))
