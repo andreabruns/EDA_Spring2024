@@ -1,6 +1,6 @@
 ---
 title: "Lab 3 - Workspaces and the Here library"
-author: "Environmental Data Analytics | John Fay and Luana Lima "
+author: "Environmental Data Analytics | John Fay and Luana Lima | Updated by Andrea Bruns"
 date: "Spring 2024"
 output: pdf_document
 geometry: margin=2.54cm
